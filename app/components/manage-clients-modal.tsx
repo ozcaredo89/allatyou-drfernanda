@@ -190,12 +190,17 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
     );
 
     return (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-[2rem] w-full max-w-5xl shadow-2xl border-t-[8px] border-pink-400 h-[85vh] flex overflow-hidden">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-0 sm:p-4">
+            <div className="bg-white sm:rounded-[2rem] w-full max-w-5xl shadow-2xl sm:border-t-[8px] sm:border-pink-400 h-[100dvh] sm:h-[85vh] flex flex-col md:flex-row overflow-hidden relative">
+
+                {/* BOTÓN DE CIERRE GLOBAL (Mobile) */}
+                <button onClick={onClose} className="md:hidden absolute top-4 right-4 z-50 text-slate-500 bg-white shadow-md hover:bg-slate-100 rounded-full w-10 h-10 flex items-center justify-center transition-colors">
+                    <X size={20} />
+                </button>
 
                 {/* PANEL LATERAL: Lista de clientes */}
-                <div className="w-1/3 bg-slate-50 border-r border-slate-200 flex flex-col h-full">
-                    <div className="p-6 border-b border-slate-200">
+                <div className={`w-full md:w-1/3 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col h-full ${selectedClient ? 'hidden md:flex' : 'flex'}`}>
+                    <div className="p-4 md:p-6 border-b border-slate-200">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
                                 <User className="text-pink-400" /> Clientes
@@ -216,7 +221,7 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-2">
+                    <div className="flex-1 overflow-y-auto scrollbar-hide p-3 md:p-4 space-y-2 pb-20 md:pb-4">
                         {loading ? (
                             <p className="text-center text-slate-400 mt-10 animate-pulse text-sm">Cargando...</p>
                         ) : filteredClients.length > 0 ? (
@@ -237,37 +242,46 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                 </div>
 
                 {/* PANEL PRINCIPAL: Detalles del Cliente */}
-                <div className="w-2/3 bg-white flex flex-col h-full relative">
-                    <button onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                <div className={`w-full md:w-2/3 bg-white flex flex-col h-full relative ${!selectedClient ? 'hidden md:flex' : 'flex'}`}>
+
+                    {/* Botón Cerrar — siempre visible en desktop */}
+                    <button onClick={onClose} className="hidden md:flex absolute top-5 right-5 z-30 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full w-9 h-9 items-center justify-center transition-colors shadow-sm">
                         <X size={18} />
                     </button>
 
                     {!selectedClient ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-slate-300">
                             <User size={64} className="mb-4 opacity-50" />
-                            <p className="font-medium">Selecciona un cliente para ver detalles</p>
+                            <p className="font-medium text-center px-4">Selecciona un cliente para ver o editar detalles</p>
                         </div>
                     ) : (
                         <>
                             {/* Header Cliente */}
-                            <div className="p-8 border-b border-slate-100 pt-10">
-                                <h3 className="text-3xl font-black text-slate-800">{selectedClient.name}</h3>
+                            <div className="p-5 md:p-8 border-b border-slate-100 pt-6 md:pt-10 bg-white z-20 sticky top-0">
+                                {/* Botón Volver (Solo Móvil) */}
+                                <div className="flex items-center justify-between mb-3 md:mb-0">
+                                    <button onClick={() => setSelectedClient(null)} className="md:hidden flex items-center gap-2 text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg text-sm font-medium border border-slate-200">
+                                        ← Volver a lista
+                                    </button>
+                                </div>
+
+                                <h3 className="text-2xl md:text-3xl font-black text-slate-800 flex-wrap pr-10 md:pr-0">{selectedClient.name}</h3>
                                 <p className="text-slate-500 font-medium mt-1 flex items-center gap-1.5 font-mono text-sm">
-                                    <Phone size={14} /> {selectedClient.phone}
+                                    <Phone size={14} /> {selectedClient.phone || 'Sin número'}
                                 </p>
 
-                                {/* TABS */}
-                                <div className="flex gap-6 mt-8 border-b border-slate-100">
-                                    <button onClick={() => setActiveTab('profile')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'profile' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
-                                        <User size={16} /> Perfil y Preferencias
+                                {/* TABS horizontales con scroll */}
+                                <div className="flex gap-4 md:gap-6 mt-6 md:mt-8 border-b border-slate-100 overflow-x-auto scrollbar-hide pb-1">
+                                    <button onClick={() => setActiveTab('profile')} className={`pb-2 whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'profile' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
+                                        <User size={16} /> Perfil / Notas
                                     </button>
                                     {!selectedClient.isNew && (
                                         <>
-                                            <button onClick={() => setActiveTab('history')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'history' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
+                                            <button onClick={() => setActiveTab('history')} className={`pb-2 whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'history' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
                                                 <History size={16} /> Historial Citas
                                             </button>
-                                            <button onClick={() => setActiveTab('gallery')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
-                                                <ImageIcon size={16} /> Galería de Trabajos
+                                            <button onClick={() => setActiveTab('gallery')} className={`pb-2 whitespace-nowrap font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
+                                                <ImageIcon size={16} /> Trabajos
                                             </button>
                                         </>
                                     )}
@@ -275,34 +289,34 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                             </div>
 
                             {/* Contenido (Scrolleable) */}
-                            <div className="flex-1 overflow-y-auto scrollbar-hide p-8 bg-slate-50/50">
+                            <div className="flex-1 overflow-y-auto scrollbar-hide p-5 md:p-8 bg-slate-50/50 pb-20 md:pb-8">
 
                                 {/* TAB 1: PERFIL */}
                                 {activeTab === 'profile' && (
                                     <form onSubmit={handleSaveProfile} className="max-w-xl space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                         <div>
                                             <label className="text-xs font-bold text-slate-400 uppercase ml-1 block mb-1">Nombre Completo</label>
-                                            <input required className="w-full bg-white border border-slate-200 rounded-xl p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm" value={profileData.name} onChange={e => setProfileData({ ...profileData, name: e.target.value })} />
+                                            <input required className="w-full bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm" value={profileData.name} onChange={e => setProfileData({ ...profileData, name: e.target.value })} />
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-slate-400 uppercase ml-1 block mb-1">Teléfono o WhatsApp</label>
-                                            <input required className="w-full bg-white border border-slate-200 rounded-xl p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm font-mono" value={profileData.phone} onChange={e => setProfileData({ ...profileData, phone: e.target.value })} />
+                                            <input required className="w-full bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm font-mono" value={profileData.phone} onChange={e => setProfileData({ ...profileData, phone: e.target.value })} />
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1.5 ml-1 mb-1">
                                                 <FileText size={14} /> Notas Internas
                                             </label>
-                                            <textarea className="w-full bg-white border border-slate-200 rounded-xl p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm min-h-[80px]" placeholder="Ej. Sensible a la lima, paga por transferencia..." value={profileData.notes} onChange={e => setProfileData({ ...profileData, notes: e.target.value })} />
+                                            <textarea className="w-full bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm min-h-[80px]" placeholder="Ej. Sensible a la lima, paga por transferencia..." value={profileData.notes} onChange={e => setProfileData({ ...profileData, notes: e.target.value })} />
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold text-pink-500 uppercase flex items-center gap-1.5 ml-1 mb-1">
-                                                ✨ Preferencias de Diseños / Estilos
+                                            <label className="text-xs font-bold text-pink-500 uppercase flex items-center gap-1.5 ml-1 mb-1 mt-6">
+                                                ✨ Preferencias de Diseños
                                             </label>
-                                            <textarea className="w-full bg-pink-50/20 border border-pink-200 rounded-xl p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm min-h-[100px]" placeholder="Ej. Acepta solo acrílico, prefiere tonos pasteles, diseño de animal print..." value={profileData.preferences} onChange={e => setProfileData({ ...profileData, preferences: e.target.value })} />
+                                            <textarea className="w-full bg-pink-50/20 border border-pink-200 rounded-xl p-3 md:p-3.5 focus:border-pink-400 outline-none transition-all shadow-sm min-h-[100px]" placeholder="Ej. Acepta solo acrílico, prefiere tonos pasteles, animal print..." value={profileData.preferences} onChange={e => setProfileData({ ...profileData, preferences: e.target.value })} />
                                         </div>
 
-                                        <div className="pt-2">
-                                            <button disabled={isSavingProfile} className="bg-slate-800 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg flex items-center gap-2">
+                                        <div className="pt-4">
+                                            <button disabled={isSavingProfile} className="w-full sm:w-auto bg-slate-800 text-white px-6 py-3.5 md:py-3 rounded-xl font-bold hover:bg-slate-900 transition-all shadow-lg flex items-center justify-center gap-2">
                                                 {isSavingProfile ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                                 Guardar Perfil
                                             </button>
@@ -316,28 +330,28 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                                         {appointmentsH.length === 0 ? (
                                             <p className="text-slate-400 text-sm italic">No hay citas registradas para {selectedClient.name}.</p>
                                         ) : (
-                                            <div className="relative border-l-2 border-pink-100 ml-4 pl-6 space-y-6">
+                                            <div className="relative border-l-2 border-pink-100 ml-2 md:ml-4 pl-4 md:pl-6 space-y-6">
                                                 {appointmentsH.map(app => {
                                                     const date = new Date(app.start_time);
                                                     return (
-                                                        <div key={app.id} className="relative bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-                                                            <span className="absolute -left-[31px] top-6 w-4 h-4 rounded-full bg-pink-400 ring-4 ring-slate-50"></span>
-                                                            <div className="flex justify-between items-start">
+                                                        <div key={app.id} className="relative bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100">
+                                                            <span className="absolute -left-[25px] md:-left-[31px] top-6 w-3 h-3 md:w-4 md:h-4 rounded-full bg-pink-400 ring-4 ring-slate-50"></span>
+                                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                                                                 <div>
-                                                                    <h4 className="font-bold text-slate-700 text-lg flex items-center gap-2">
+                                                                    <h4 className="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2">
                                                                         <CalendarIcon size={16} className="text-pink-500" />
-                                                                        {format(date, "EEEE, d 'de' MMMM yyyy", { locale: es })}
+                                                                        {format(date, "EEEE, d 'de' MMMM", { locale: es })}
                                                                     </h4>
-                                                                    <p className="text-slate-500 text-sm mt-1 font-medium bg-slate-50 inline-block px-2 py-1 rounded-md">
+                                                                    <p className="text-slate-500 text-xs md:text-sm mt-1 font-medium bg-slate-50 inline-block px-2 py-1 rounded-md">
                                                                         {format(date, 'hh:mm a')}
                                                                     </p>
                                                                 </div>
-                                                                <span className="bg-pink-100/50 text-pink-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                                                <span className="self-start bg-pink-100/50 text-pink-700 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wide">
                                                                     {app.services?.title || "Servicio General"}
                                                                 </span>
                                                             </div>
                                                             {app.notes && (
-                                                                <p className="mt-3 text-sm text-slate-500 bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200">
+                                                                <p className="mt-3 text-xs md:text-sm text-slate-500 bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200">
                                                                     "{app.notes}"
                                                                 </p>
                                                             )}
@@ -352,10 +366,10 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                                 {/* TAB 3: GALERÍA */}
                                 {activeTab === 'gallery' && (
                                     <div className="animate-in fade-in duration-300">
-                                        <div className="flex justify-between items-end mb-6">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
                                             <p className="text-sm text-slate-500">Documenta los trabajos realizados para {selectedClient.name.split(' ')[0]}.</p>
 
-                                            <div className="relative">
+                                            <div className="relative w-full sm:w-auto">
                                                 <input
                                                     type="file"
                                                     accept="image/*"
@@ -367,7 +381,7 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                                                 <button
                                                     onClick={() => fileInputRef.current?.click()}
                                                     disabled={isUploadingPhoto}
-                                                    className="bg-pink-50 text-pink-600 px-4 py-2.5 rounded-xl font-bold hover:bg-pink-100 transition-all shadow-sm flex items-center gap-2 text-sm border border-pink-200"
+                                                    className="w-full sm:w-auto justify-center bg-pink-50 text-pink-600 px-4 py-2.5 rounded-xl font-bold hover:bg-pink-100 transition-all shadow-sm flex items-center gap-2 text-sm border border-pink-200"
                                                 >
                                                     {isUploadingPhoto ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
                                                     {isUploadingPhoto ? 'Subiendo...' : 'Subir Foto'}
@@ -376,21 +390,21 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                                         </div>
 
                                         {photos.length === 0 ? (
-                                            <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-10 flex flex-col items-center justify-center text-slate-400">
+                                            <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-8 md:p-10 flex flex-col items-center justify-center text-slate-400">
                                                 <ImageIcon size={48} className="mb-3 opacity-20" />
-                                                <p>No hay fotos en el historial.</p>
+                                                <p className="text-center text-sm">No hay fotos en el historial.</p>
                                             </div>
                                         ) : (
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                                                 {photos.map(p => (
                                                     <div key={p.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-sm bg-slate-200 border border-slate-200">
                                                         <img src={p.photo_url} alt="Nails" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3">
-                                                            <span className="text-white/80 text-xs font-medium">
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-2 md:p-3">
+                                                            <span className="text-white/80 text-[10px] md:text-xs font-medium bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
                                                                 {format(new Date(p.created_at), 'MMM dd, yyyy')}
                                                             </span>
-                                                            <button onClick={() => handleDeletePhoto(p.id)} className="bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-full backdrop-blur-sm transition-colors">
-                                                                <Trash2 size={14} />
+                                                            <button onClick={() => handleDeletePhoto(p.id)} className="bg-red-500/80 hover:bg-red-600 text-white p-1.5 md:p-2 rounded-full backdrop-blur-sm transition-colors">
+                                                                <Trash2 size={12} className="md:w-[14px] md:h-[14px]" />
                                                             </button>
                                                         </div>
                                                     </div>
