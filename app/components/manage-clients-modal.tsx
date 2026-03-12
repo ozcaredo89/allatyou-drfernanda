@@ -12,9 +12,10 @@ import {
 
 interface ManageClientsModalProps {
     onClose: () => void;
+    companyId: number;
 }
 
-export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
+export function ManageClientsModal({ onClose, companyId }: ManageClientsModalProps) {
     const [clients, setClients] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -38,7 +39,11 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
 
     const fetchClients = async () => {
         setLoading(true);
-        const { data } = await supabase.from('clients').select('*').order('name', { ascending: true });
+        const { data } = await supabase
+            .from('clients')
+            .select('*')
+            .eq('company_id', companyId)
+            .order('name', { ascending: true });
         setClients(data || []);
         setLoading(false);
     };
@@ -60,6 +65,7 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
         const { data: hist } = await supabase.from('appointments')
             .select('*, services(title)')
             .eq('client_id', clientId)
+            .eq('company_id', companyId)
             .order('start_time', { ascending: false });
 
         setAppointmentsH(hist || []);
@@ -68,6 +74,7 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
         const { data: pics } = await supabase.from('client_photos')
             .select('*')
             .eq('client_id', clientId)
+            .eq('company_id', companyId)
             .order('created_at', { ascending: false });
 
         setPhotos(pics || []);
@@ -85,7 +92,8 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                     name: profileData.name,
                     phone: profileData.phone,
                     notes: profileData.notes,
-                    preferences: profileData.preferences
+                    preferences: profileData.preferences,
+                    company_id: companyId
                 }]).select().single();
 
                 if (error) throw error;
@@ -154,7 +162,8 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
             const { error } = await supabase.from('client_photos').insert([{
                 client_id: selectedClient.id,
                 photo_url: fileUrl,
-                description: 'Subido desde panel'
+                description: 'Subido desde panel',
+                company_id: companyId
             }]);
 
             if (error) throw error;
