@@ -212,7 +212,7 @@ export function ManageClientsModal({ onClose, companyId }: ManageClientsModalPro
                     <div className="p-4 md:p-6 border-b border-slate-200">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                                <User className="text-pink-400" /> Clientes
+                                <User className="text-pink-400" /> Pacientes
                             </h2>
                             <button onClick={handleCreateNewClient} className="bg-pink-100/50 text-pink-600 p-2 rounded-xl hover:bg-pink-100 transition-colors" title="Nuevo Cliente">
                                 <UserPlus size={18} />
@@ -245,7 +245,7 @@ export function ManageClientsModal({ onClose, companyId }: ManageClientsModalPro
                                 </button>
                             ))
                         ) : (
-                            <p className="text-center text-slate-400 mt-10 text-sm">No se encontraron clientes.</p>
+                            <p className="text-center text-slate-400 mt-10 text-sm">No se encontraron pacientes.</p>
                         )}
                     </div>
                 </div>

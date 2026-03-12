@@ -262,14 +262,14 @@ export function AdminCalendarClient() {
             className="flex items-center gap-2 text-pink-500 bg-pink-50/50 hover:bg-pink-100 px-3 md:px-5 py-2 md:py-2.5 rounded-xl font-bold transition-all text-sm border border-pink-100/50"
           >
             <Users size={18} />
-            <span className="hidden sm:inline">Clientes</span>
+            <span className="hidden sm:inline">Pacientes</span>
           </button>
           <button
             onClick={() => setIsServicesModalOpen(true)}
             className="flex items-center gap-2 text-[#D4AF37] bg-yellow-50/50 hover:bg-yellow-100 px-3 md:px-5 py-2 md:py-2.5 rounded-xl font-bold transition-all text-sm border border-yellow-100/50"
           >
             <Settings size={18} />
-            <span className="hidden md:inline">Servicios</span>
+            <span className="hidden md:inline">Procedimientos</span>
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -314,7 +314,7 @@ export function AdminCalendarClient() {
               <input required type="tel" className="w-full bg-pink-50/30 border-2 border-pink-50 rounded-2xl p-3 md:p-4 text-sm md:text-base focus:border-[#D4AF37] focus:bg-white outline-none transition-all" placeholder="Teléfono / WhatsApp" value={formData.clientPhone} onChange={e => checkClient(e.target.value)} />
               <input required className={`w-full border-2 rounded-2xl p-3 md:p-4 text-sm md:text-base outline-none transition-all ${!isNewClient ? 'bg-slate-50 border-transparent text-slate-500 cursor-not-allowed' : 'bg-pink-50/30 border-pink-50 focus:border-[#D4AF37] focus:bg-white'}`} placeholder="Nombre del paciente" value={formData.clientName} readOnly={!isNewClient} onChange={e => setFormData({ ...formData, clientName: e.target.value })} />
               <select required className="w-full bg-pink-50/30 border-2 border-pink-50 rounded-2xl p-3 md:p-4 text-sm md:text-base focus:border-[#D4AF37] focus:bg-white outline-none transition-all appearance-none text-slate-600 font-medium" value={formData.serviceId} onChange={e => setFormData({ ...formData, serviceId: e.target.value })}>
-                <option value="">Selecciona un servicio...</option>
+                <option value="">Selecciona un procedimiento...</option>
                 {services.filter(s => s.active).map(s => (
                   <option key={s.id} value={s.id}>{s.title} ({s.duration_min} min)</option>
                 ))}
@@ -338,14 +338,14 @@ export function AdminCalendarClient() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 w-full max-w-2xl shadow-2xl border-t-[8px] md:border-t-[10px] border-pink-400 max-h-[90vh] overflow-y-auto scrollbar-hide flex flex-col md:flex-row gap-6 md:gap-8 relative">
             <div className="flex justify-between items-center w-full md:hidden mb-2">
-              <h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><Scissors className="text-pink-400" /> Catálogo</h2>
+              <h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><Scissors className="text-pink-400" /> Procedimientos</h2>
               <button onClick={() => { setIsServicesModalOpen(false); resetServiceForm(); }} className="text-slate-500 bg-slate-100 hover:bg-slate-200 rounded-full w-10 h-10 flex items-center justify-center font-bold">✕</button>
             </div>
             <div className="flex-1 space-y-4">
-              <h2 className="hidden md:flex text-2xl font-black text-slate-800 mb-6 items-center gap-2"><Scissors className="text-pink-400" /> Catálogo</h2>
+              <h2 className="hidden md:flex text-2xl font-black text-slate-800 mb-6 items-center gap-2"><Scissors className="text-pink-400" /> Procedimientos</h2>
               <form onSubmit={handleSaveService} className="space-y-4 bg-slate-50 p-5 md:p-6 rounded-[1.5rem] border border-slate-100">
                 <div>
-                  <label className="text-xs font-bold text-slate-400 uppercase ml-1 block">Nombre del Servicio</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase ml-1 block">Nombre del Procedimiento</label>
                   <input required className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:border-pink-400 outline-none transition-all mt-1" placeholder="Ej. Limpieza Facial" value={serviceFormData.title} onChange={e => setServiceFormData({ ...serviceFormData, title: e.target.value })} />
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -371,7 +371,7 @@ export function AdminCalendarClient() {
             </div>
             <div className="flex-1 mt-6 md:mt-0">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-sm font-black text-slate-400 uppercase">Servicios Guardados</h3>
+                <h3 className="text-sm font-black text-slate-400 uppercase">Procedimientos Guardados</h3>
                 <button onClick={() => { setIsServicesModalOpen(false); resetServiceForm(); }} className="hidden md:flex text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full w-8 h-8 items-center justify-center transition-colors">✕</button>
               </div>
               <div className="space-y-3 max-h-[250px] md:max-h-[350px] overflow-y-auto scrollbar-hide pr-1">
@@ -390,7 +390,7 @@ export function AdminCalendarClient() {
                   </div>
                 ))}
                 {services.length === 0 && (
-                  <p className="text-sm text-slate-400 text-center py-4 italic">No hay servicios registrados.</p>
+                  <p className="text-sm text-slate-400 text-center py-4 italic">No hay procedimientos registrados.</p>
                 )}
               </div>
             </div>
